@@ -44,7 +44,7 @@ const updateEmployee = async (req, res) => {
       req.body,
       { new: true }
     );
-    res.status(200).send(updatedEmployee);
+    res.status(202).send(updatedEmployee);
   } catch (error) {
     res.status(404).send(`Can't Update Employee with id ${req.params.id}`);
     console.log("PUT Employee Error: ", error.message);

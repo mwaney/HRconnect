@@ -38,7 +38,7 @@ function UpdateUser() {
               className="form-control"
             />
           </div>
-          <button className="btn btn-success">Submit</button>
+          <button className="btn btn-success">Update</button>
         </form>
       </div>
     </div>
