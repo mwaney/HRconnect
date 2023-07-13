@@ -2,11 +2,13 @@ const express = require("express");
 require("dotenv").config();
 const cors = require("cors");
 const dbConnect = require("./dbConnect");
+const router = require("./routes/employee");
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
+app.use("/api/employees", router);
 dbConnect();
 
 app.get("/", (req, res) => {

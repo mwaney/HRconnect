@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const employeeSchema = mongoose.Schema({
+const employeeSchema = new mongoose.Schema({
   name: { type: String, required: [true, "Please enter name"], minlength: 2 },
   email: { type: String, required: true },
   phone: { type: Number, required: true },
