@@ -36,7 +36,10 @@ function Users() {
                   <td>{user.phone}</td>
                   <td>{user.age}</td>
                   <td>
-                    <Link to="/update" className="btn btn-primary">
+                    <Link
+                      to={`/update/${user._id}`}
+                      className="btn btn-primary"
+                    >
                       Update
                     </Link>
                     <button className="btn btn-danger">Delete</button>
