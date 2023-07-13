@@ -29,6 +29,8 @@ router.get("/", async (req, res) => {
 router.get("/:id", async (req, res) => {
   try {
     const employee = await Employees.findById(req.params.id);
+    if (!employee) return res.status(400).send("Employee doesn't exist");
+
     res.status(200).send(employee);
   } catch (error) {
     res.status(404).send(`Employee with id ${req.params.id} doesn't exist`);
@@ -39,6 +41,7 @@ router.get("/:id", async (req, res) => {
 router.put("/:id", async (req, res) => {
   try {
     const employee = await Employees.findById(req.params.id);
+    if (!employee) return res.status(400).send("Employee doesn't exist");
 
     const updatedEmployee = await Employees.findByIdAndUpdate(
       employee._id,
@@ -49,6 +52,20 @@ router.put("/:id", async (req, res) => {
   } catch (error) {
     res.status(404).send(`Can't Update Employee with id ${req.params.id}`);
     console.log("PUT Employee Error: ", error.message);
+  }
+});
+
+router.delete("/:id", async (req, res) => {
+  try {
+    const employee = await Employees.findById(req.params.id);
+    if (!employee) return res.status(400).send("Employee doesn't exist");
+
+    const deletedEmployee = await Employees.deleteOne({ _id: employee._id });
+    res.status(200).send(employee);
+    console.log(deletedEmployee);
+  } catch (error) {
+    res.status(400).send(`Unable to delete employee with id ${req.params.id}`);
+    console.error("Delete Error: ", error.message);
   }
 });
 module.exports = router;
