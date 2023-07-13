@@ -80,7 +80,7 @@ function UpdateUser() {
               type="number"
               placeholder="Enter Age"
               className="form-control"
-              onChange={(e) => setPhone(e.target.value)}
+              onChange={(e) => setAge(e.target.value)}
               value={age}
             />
           </div>

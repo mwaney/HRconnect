@@ -55,7 +55,9 @@ const deleteEmployee = async (req, res) => {
     const employee = await Employees.findById(req.params.id);
     if (!employee) return res.status(400).send("Employee doesn't exist");
 
-    const deletedEmployee = await Employees.deleteOne({ _id: employee._id });
+    const deletedEmployee = await Employees.findByIdAndDelete({
+      _id: employee._id,
+    });
     res.status(200).send(employee);
     console.log(deletedEmployee);
   } catch (error) {
