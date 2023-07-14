@@ -33,7 +33,18 @@ function Users() {
       .catch((err) => console.log(err));
   };
   return (
-    <div className="d-flex vh-100 bg-warning justify-content-center align-items-center">
+    <div className="d-flex flex-column vh-100 bg-warning justify-content-center align-items-center">
+      <div className="mb-3">
+        <h1
+          style={{
+            fontWeight: "bold",
+            fontFamily: "fantasy",
+            color: "#5B7C99",
+          }}
+        >
+          HrConnect Employee DashBoard
+        </h1>
+      </div>
       <div className="w-70 bg-white rounded p-3">
         <Link to="/create" className="btn btn-info mb-2">
           Add +
