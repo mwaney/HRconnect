@@ -15,7 +15,7 @@ function OneUSer() {
       .catch((err) => console.log(err));
   }, []);
   return (
-    <div className="d-flex vh-100 bg-primary justify-content-center align-items-center">
+    <div className="d-flex vh-100 bg-warning justify-content-center align-items-center">
       <div className="w-70 bg-light rounded p-3">
         <div className="card" style={{ width: "18rem" }}>
           <img
