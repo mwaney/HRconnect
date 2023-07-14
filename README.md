@@ -54,10 +54,14 @@ npm run dev
 This will start the React development server and open the application in your default browser.
 3. Use the HrConnect application in your browser:
 - Create a new employee record by clicking the "__Add +__" button on the home page. This will open a form.
+  ![Screenshot Description](/screenShots/Home.png)
 - fill out the necessary fields and click the "__Create__" button.
+  ![Screenshot Description](/screenShots/new.png)
 - The list of employees and their details is located on the home page.
 - View details of an employee by clicking the "__view__" button next to an employee's entry.
+  ![Screenshot Description](/screenShots/viewUser.png)
 - Update employee information by clicking the "__Update__" button next to an employee's entry, making the desired changes, and clicking the "__Update__" button.
+  ![Screenshot Description](/screenShots/Update.png)
 - Delete an employee record by clicking the "__Delete__" button next to an employee's entry.
 ## Folder Structure
 The HrConnect project has the following folder structure:
