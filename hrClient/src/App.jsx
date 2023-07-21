@@ -6,18 +6,20 @@ import Users from "./components/Users";
 import CreateUser from "./components/CreateUser";
 import UpdateUser from "./components/UpdateUser";
 import OneUSer from "./components/OneUSer";
+import SignUp from "./components/SignUp";
+import LoginForm from "./components/LogIn";
 
 function App() {
-  const [count, setCount] = useState(0);
-
   return (
     <div>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Users />}></Route>
+          <Route path="/allemployees" element={<Users />}></Route>
           <Route path="/create" element={<CreateUser />}></Route>
           <Route path="/update/:id" element={<UpdateUser />}></Route>
           <Route path="/:id" element={<OneUSer />}></Route>
+          <Route path="/" element={<SignUp />}></Route>
+          <Route path="/login" element={<LoginForm />}></Route>
         </Routes>
       </BrowserRouter>
     </div>
