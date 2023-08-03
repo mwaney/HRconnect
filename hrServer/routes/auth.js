@@ -10,6 +10,9 @@ authRouter.post("/", async (req, res) => {
     if (!email) res.status(400).send("Email is required");
     if (!password) res.status(400).send("Password is required");
 
+    const emailExists = await Person.findOne({ email });
+    if (emailExists)
+      return res.status(409).send("Email address is already in use");
     const person = await Person.create({ userName, email, password });
     res.status(201).send(person);
   } catch (err) {
