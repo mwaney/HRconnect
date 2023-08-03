@@ -1,5 +1,6 @@
 const express = require("express");
 require("dotenv").config();
+const bodyParser = require("body-parser");
 const cors = require("cors");
 const dbConnect = require("./dbConnect");
 const router = require("./routes/employee");
@@ -9,6 +10,7 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
+app.use(bodyParser.json());
 app.use("/api/employees", router);
 app.use("/api/auth", authRouter);
 

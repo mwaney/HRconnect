@@ -1,6 +1,7 @@
 const express = require("express");
 const authRouter = express.Router();
 const Person = require("../models/auth");
+const User = require("../models/user");
 
 authRouter.post("/", async (req, res) => {
   try {
@@ -18,6 +19,20 @@ authRouter.post("/", async (req, res) => {
   } catch (err) {
     res.status(400).send("Unable to create Person to auth");
     console.log("Unable to Create the Person to auth", err.message);
+  }
+});
+
+authRouter.post("/login", async (req, res) => {
+  const { email, password } = req.body;
+  try {
+    const user = await User.findOne({ email });
+    if (!user) return res.status(401).json({ error: "Invalid credentials" });
+
+    if (user.password != password)
+      return res.status(401).json({ error: "Invalid credentials" });
+    return res.status(200).json({ message: "Login successful" });
+  } catch (error) {
+    return res.status(500).json({ error: "Internal server error" });
   }
 });
 
