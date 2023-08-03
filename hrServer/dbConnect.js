@@ -2,7 +2,11 @@ const mongoose = require("mongoose");
 
 const dbConnect = async () => {
   await mongoose
-    .connect("mongodb://localhost/hrConnect")
+    .connect("mongodb://localhost/hrConnect", {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      useCreateIndex: true,
+    })
     .then(() => {
       console.log("Connected Successfully to MongoDB...");
     })
