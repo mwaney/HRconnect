@@ -14,12 +14,12 @@ function App() {
     <div>
       <BrowserRouter>
         <Routes>
+          <Route path="/" element={<SignUp />}></Route>
+          <Route path="/login" element={<LoginForm />}></Route>
           <Route path="/allemployees" element={<Users />}></Route>
           <Route path="/create" element={<CreateUser />}></Route>
           <Route path="/update/:id" element={<UpdateUser />}></Route>
           <Route path="/:id" element={<OneUSer />}></Route>
-          <Route path="/" element={<SignUp />}></Route>
-          <Route path="/login" element={<LoginForm />}></Route>
         </Routes>
       </BrowserRouter>
     </div>
