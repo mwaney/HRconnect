@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import NavigationBar from "./Navbar";
@@ -16,7 +16,7 @@ function CreateUser() {
       .post("http://localhost:5656/api/employees", { name, email, phone, age })
       .then((result) => {
         console.log(result);
-        navigate("/allemployees");
+        navigate("/employees");
       })
       .catch((err) => console.log(err));
   };

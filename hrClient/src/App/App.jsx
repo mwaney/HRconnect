@@ -15,9 +15,9 @@ function App() {
         <Routes>
           <Route path="/" element={<SignUp />}></Route>
           <Route path="/login" element={<Login />}></Route>
-          <Route path="/allemployees" element={<Users />}></Route>
+          <Route path="/employees" element={<Users />}></Route>
+          <Route path="/employees/:id" element={<UpdateUser />}></Route>
           <Route path="/create" element={<CreateUser />}></Route>
-          <Route path="/update/:id" element={<UpdateUser />}></Route>
           <Route path="/:id" element={<OneUSer />}></Route>
         </Routes>
       </BrowserRouter>

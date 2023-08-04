@@ -1,24 +1,27 @@
 const express = require("express");
 const authRouter = express.Router();
-const Person = require("../models/auth");
+const { AuthModel, validateUser } = require("../models/auth");
 const User = require("../models/user");
 
 authRouter.post("/", async (req, res) => {
   try {
+    const { error } = await validateUser(req.body);
+    if (error) return res.status(400).send(error.details[0].message);
+
     const { userName, email, password } = req.body;
 
     if (!userName) res.status(400).send("User Name is required");
     if (!email) res.status(400).send("Email is required");
     if (!password) res.status(400).send("Password is required");
 
-    const emailExists = await Person.findOne({ email });
+    const emailExists = await AuthModel.findOne({ email });
     if (emailExists)
       return res.status(409).send("Email address is already in use");
-    const person = await Person.create({ userName, email, password });
-    res.status(201).send(person);
+    const person = await AuthModel.create({ userName, email, password });
+    return res.status(201).send(person);
   } catch (err) {
-    res.status(400).send("Unable to create Person to auth");
     console.log("Unable to Create the Person to auth", err.message);
+    return res.status(400).send("Unable to create Person to auth");
   }
 });
 

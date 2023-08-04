@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import NavigationBar from "./Navbar";
 
@@ -33,7 +33,7 @@ function OneUSer() {
                 <li className="list-group-item">Cell: +{user.phone}</li>
                 <li className="list-group-item">Age: {user.age}</li>
               </ul>
-              <Link to="/" className="btn btn-primary">
+              <Link to="/employees" className="btn btn-primary">
                 Go Back
               </Link>
             </div>

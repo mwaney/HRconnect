@@ -1,4 +1,3 @@
-import React from "react";
 import { Row, Col, Form, Button } from "react-bootstrap";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -20,7 +19,7 @@ const validationSchema = Yup.object({
   password: Yup.string()
     .required("Password is required")
     .min(6, "Password must have atleast 6 characters")
-    .max(50, "Password must have 50 characters or less"),
+    .max(255, "Password must have 255 characters or less"),
   confirmPassword: Yup.string()
     .oneOf([Yup.ref("password"), null], "The passwords don't match")
     .required("Please confirm your password"),

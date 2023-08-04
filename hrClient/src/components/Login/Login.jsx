@@ -1,4 +1,3 @@
-import React from "react";
 import { Col, Row, Form, Button, Container } from "react-bootstrap";
 import * as Yup from "yup";
 import { useFormik } from "formik";
@@ -17,15 +16,20 @@ function Login() {
   const formik = useFormik({
     initialValues: { email: "", password: "" },
     validationSchema,
-    onSubmit: (values) => {},
+    onSubmit: (values) => {
+      alert(JSON.stringify(values, null, 2));
+    },
   });
   return (
-   <Container>
-    <Row>
-      <Col className="mt-5 pt-5"  xl={{ span: 4, offset: 4 }}
-            lg={{ span: 4, offset: 4 }}
-            md={{ span: 6, offset: 3 }}
-            sm={{ span: 8, offset: 2 }}>
+    <Container>
+      <Row>
+        <Col
+          className="mt-5 pt-5"
+          xl={{ span: 4, offset: 4 }}
+          lg={{ span: 4, offset: 4 }}
+          md={{ span: 6, offset: 3 }}
+          sm={{ span: 8, offset: 2 }}
+        >
           <div className="bg-white p-4 rounded shadow-lg">
             <h2 className="text-center text-primary">Login</h2>
             <hr />
@@ -38,7 +42,9 @@ function Login() {
                   {...formik.getFieldProps("email")}
                 />
                 {formik.touched.email && formik.errors.email ? (
-                  <div className="text-danger"><small>{formik.errors.email}</small></div>
+                  <div className="text-danger">
+                    <small>{formik.errors.email}</small>
+                  </div>
                 ) : null}
               </Form.Group>
 
@@ -50,31 +56,34 @@ function Login() {
                   {...formik.getFieldProps("password")}
                 />
                 {formik.touched.password && formik.errors.password ? (
-                  <div className="text-danger"><small>{formik.errors.password}</small></div>
+                  <div className="text-danger">
+                    <small>{formik.errors.password}</small>
+                  </div>
                 ) : null}
               </Form.Group>
-              
+
               <div className="d-grid mb-3">
-                <Button
-                  variant="primary"
-                  type="submit"
-                >
+                <Button variant="primary" type="submit">
                   Sign In
                 </Button>
-            </div>
+              </div>
             </Form>
             <p className="text-center">
-                <small>Don't Have an Account? <a href="/">Register</a></small>
+              <small>
+                Dont Have an Account? <a href="/">Register</a>
+              </small>
             </p>
             <p className="text-center ">
-              <small><a href="#" className="text-dark">
-                Forgot Password?
-              </a></small>
+              <small>
+                <a href="#" className="text-dark">
+                  Forgot Password?
+                </a>
+              </small>
             </p>
           </div>
-      </Col>
-    </Row>
-   </Container>
+        </Col>
+      </Row>
+    </Container>
   );
 }
 

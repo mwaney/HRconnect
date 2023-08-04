@@ -5,7 +5,6 @@ const dbConnect = async () => {
     .connect("mongodb://localhost/hrConnect", {
       useNewUrlParser: true,
       useUnifiedTopology: true,
-      useCreateIndex: true,
     })
     .then(() => {
       console.log("Connected Successfully to MongoDB...");

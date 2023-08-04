@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import axios from "axios";
 import NavigationBar from "./Navbar";
@@ -12,7 +12,7 @@ function Users() {
     axios
       .get("http://localhost:5656/api/employees")
       .then((result) => setUsers(result.data))
-      .catch((err) => console.log(err));
+      .catch((err) => console.log("getError", err));
   }, []);
 
   useEffect(() => {
@@ -80,7 +80,7 @@ function Users() {
                         </Link>
                         <button
                           className="btn btn-danger mr-2"
-                          onClick={(e) => handleDelete(user._id)}
+                          onClick={() => handleDelete(user._id)}
                         >
                           Delete
                         </button>
