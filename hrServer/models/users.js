@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const Joi = require("joi");
 
-const authSchema = mongoose.Schema({
+const userSchema = mongoose.Schema({
   userName: {
     type: String,
     required: [true, "Please enter your username"],
@@ -20,6 +20,7 @@ const authSchema = mongoose.Schema({
     required: [true, "Please enter your password"],
     minlength: 6,
     maxlength: 255,
+    select: false,
   },
 });
 
@@ -37,5 +38,5 @@ const validateUser = (user) => {
   return schema.validate(user);
 };
 
-const AuthModel = mongoose.model("Auth", authSchema);
-module.exports = { AuthModel, validateUser };
+const UserModel = mongoose.model("User", userSchema);
+module.exports = { UserModel, validateUser };

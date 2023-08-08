@@ -3,16 +3,18 @@ require("dotenv").config();
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const dbConnect = require("./dbConnect");
-const router = require("./routes/employee");
-const authRouter = require("./routes/auth");
+const employees = require("./routes/employee");
+const users = require("./routes/users");
+const login = require("./routes/login");
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
 app.use(bodyParser.json());
-app.use("/api/employees", router);
-app.use("/api/auth", authRouter);
+app.use("/api/employees", employees);
+app.use("/api/users", users);
+app.use("/api/login", login);
 
 dbConnect();
 

@@ -1,7 +1,9 @@
 import { Col, Row, Form, Button, Container } from "react-bootstrap";
 import * as Yup from "yup";
 import { useFormik } from "formik";
+import axios from "axios";
 import "./Login.css";
+import { useNavigate } from "react-router-dom";
 
 const validationSchema = Yup.object({
   email: Yup.string()
@@ -13,11 +15,28 @@ const validationSchema = Yup.object({
   password: Yup.string().required("Please Enter your password"),
 });
 function Login() {
+  const navigate = useNavigate();
   const formik = useFormik({
     initialValues: { email: "", password: "" },
     validationSchema,
     onSubmit: (values) => {
-      alert(JSON.stringify(values, null, 2));
+      axios
+        .post("http://localhost:5656/api/login", values)
+        .then((response) => {
+          console.log(response.data);
+          alert(JSON.stringify(values, null, 2));
+          navigate("/employees");
+        })
+        .catch((error) => {
+          if (error.response) {
+            console.log(error);
+            if (error.response.status === 401) {
+              formik.setFieldError("email", "Inavlid email or password");
+            }
+          } else {
+            console.log("Error Logging in:", error.message);
+          }
+        });
     },
   });
   return (

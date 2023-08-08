@@ -37,7 +37,7 @@ function SignUp() {
     validationSchema,
     onSubmit: (values) => {
       axios
-        .post("http://localhost:5656/api/auth", values)
+        .post("http://localhost:5656/api/users", values)
         .then((response) => {
           console.log(response.data);
           alert(JSON.stringify(response.data, null, 2));
