@@ -1,9 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { validateLogin } = require("../models/login");
-const { UserModel } = require("../models/users");
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
+const Login = require("../controllers/login");
 require("dotenv").config();
 
 const secret = process.env.SECRET;
@@ -11,31 +8,6 @@ if (!secret) {
   console.log("Fatal Error: Secret environment variable is not defined");
   process.exit(1);
 }
-router.post("/", async (req, res) => {
-  try {
-    console.log("Received data from frontend:", req.body);
-    const { email, password } = req.body;
-
-    const { error } = validateLogin(req.body);
-    if (error) return res.status(400).send(error.details[0].message);
-
-    let user = await UserModel.findOne({ email }).select("password");
-    if (!user) {
-      return res.status(400).send("Invalid Email or Password.");
-    }
-
-    const validPassword = await bcrypt.compare(password, user.password);
-    console.log("Password Comparison Result: ", validPassword);
-    if (!validPassword) {
-      return res.status(400).send("Invalid Email or Password.");
-    }
-
-    const token = user.generateAuthToken();
-    res.send(token);
-  } catch (err) {
-    console.log("Unable to Login", err.message);
-    return res.status(400).send("Unable to Login");
-  }
-});
+router.post("/", Login);
 
 module.exports = router;
