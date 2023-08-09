@@ -22,7 +22,7 @@ const Login = async (req, res) => {
     }
 
     const token = user.generateAuthToken();
-    res.send(token);
+    return res.header("x-auth-token", token).status(201).send({ token });
   } catch (err) {
     console.log("Unable to Login", err.message);
     return res.status(400).send("Unable to Login");

@@ -1,18 +1,36 @@
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import NavigationBar from "../NavigationBar";
+
+function getUsers(token) {
+  return axios.get("http://localhost:5656/api/employees", {
+    headers: {
+      "x-auth-token": token,
+    },
+  });
+}
 
 function Users() {
   const [users, setUsers] = useState([]);
   const [user, setUser] = useState([]);
   const { id } = useParams();
+  const navigate = useNavigate();
 
   useEffect(() => {
-    axios
-      .get("http://localhost:5656/api/employees")
+    const storedToken = localStorage.getItem("token");
+    if (!storedToken) {
+      navigate("/login");
+      return;
+    }
+
+    getUsers(storedToken)
       .then((result) => setUsers(result.data))
-      .catch((err) => console.log("getError", err));
+      .catch((err) => {
+        if (err.code == "ERR_BAD_REQUEST") {
+          navigate("/login");
+        }
+      });
   }, []);
 
   useEffect(() => {

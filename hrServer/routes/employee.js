@@ -7,15 +7,16 @@ const {
   deleteEmployee,
 } = require("../controllers/employees");
 const router = express.Router();
+const auth = require("../middleware/auth");
 
-router.post("/", AddEmployee);
+router.post("/", auth, AddEmployee);
 
-router.get("/", getEmployees);
+router.get("/", auth, getEmployees);
 
-router.get("/:id", getEmployee);
+router.get("/:id", auth, getEmployee);
 
-router.put("/:id", updateEmployee);
+router.put("/:id", auth, updateEmployee);
 
-router.delete("/:id", deleteEmployee);
+router.delete("/:id", auth, deleteEmployee);
 
 module.exports = router;

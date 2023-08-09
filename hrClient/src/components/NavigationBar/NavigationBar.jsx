@@ -1,7 +1,15 @@
 import Container from "react-bootstrap/Container";
 import { Nav, Navbar } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
 
 function NavigationBar() {
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    navigate("/login");
+    console.log("Log out");
+  };
   return (
     <>
       <Navbar bg="light" expand="lg">
@@ -15,7 +23,7 @@ function NavigationBar() {
             <Nav>
               <Nav.Link href="/">Sign up</Nav.Link>
               <Nav.Link href="/login">Log in</Nav.Link>
-              <Nav.Link href="#home">Log out</Nav.Link>
+              <Nav.Link onClick={handleLogout}>Log out</Nav.Link>
             </Nav>
           </Navbar.Collapse>
         </Container>

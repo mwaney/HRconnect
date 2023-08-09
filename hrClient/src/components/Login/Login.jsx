@@ -4,6 +4,7 @@ import { useFormik } from "formik";
 import axios from "axios";
 import "./Login.css";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 const validationSchema = Yup.object({
   email: Yup.string()
@@ -23,8 +24,8 @@ function Login() {
       axios
         .post("http://localhost:5656/api/login", values)
         .then((response) => {
-          console.log(response.data);
-          alert(JSON.stringify(values, null, 2));
+          const token = response.data.token;
+          localStorage.setItem("token", token);
           navigate("/employees");
         })
         .catch((error) => {
@@ -32,6 +33,7 @@ function Login() {
             console.log(error);
             if (error.response.status === 401) {
               formik.setFieldError("email", "Inavlid email or password");
+              formik.setFieldError("password", "Invalid email or password");
             }
           } else {
             console.log("Error Logging in:", error.message);
