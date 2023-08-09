@@ -17,10 +17,11 @@ const validationSchema = Yup.object({
 });
 function Login() {
   const navigate = useNavigate();
+  const [error, setError] = useState("");
   const formik = useFormik({
     initialValues: { email: "", password: "" },
     validationSchema,
-    onSubmit: (values) => {
+    onSubmit: (values, { setSubmitting }) => {
       axios
         .post("http://localhost:5656/api/login", values)
         .then((response) => {
@@ -31,18 +32,35 @@ function Login() {
         .catch((error) => {
           if (error.response) {
             console.log(error);
-            if (error.response.status === 401) {
-              formik.setFieldError("email", "Inavlid email or password");
-              formik.setFieldError("password", "Invalid email or password");
+            if (error.response.status >= 400 && error.response.status < 500) {
+              setError("Invalid email or password");
             }
           } else {
             console.log("Error Logging in:", error.message);
           }
+        })
+        .finally(() => {
+          setSubmitting(false);
         });
     },
   });
+
+  const handleAlertDismiss = () => {
+    setError("");
+  };
   return (
     <Container>
+      {error && (
+        <div className="alert alert-danger alert-dismissible mt-3" role="alert">
+          {error}
+          <button
+            type="button"
+            className="btn-close"
+            aria-label="Close"
+            onClick={handleAlertDismiss}
+          ></button>
+        </div>
+      )}
       <Row>
         <Col
           className="mt-5 pt-5"
@@ -84,7 +102,11 @@ function Login() {
               </Form.Group>
 
               <div className="d-grid mb-3">
-                <Button variant="primary" type="submit">
+                <Button
+                  variant="primary"
+                  type="submit"
+                  disabled={formik.isSubmitting}
+                >
                   Sign In
                 </Button>
               </div>
