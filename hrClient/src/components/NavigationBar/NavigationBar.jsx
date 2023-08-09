@@ -1,9 +1,11 @@
 import Container from "react-bootstrap/Container";
 import { Nav, Navbar } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 function NavigationBar() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const token = localStorage.getItem("token");
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -21,9 +23,11 @@ function NavigationBar() {
             className="justify-content-end"
           >
             <Nav>
-              <Nav.Link href="/">Sign up</Nav.Link>
-              <Nav.Link href="/login">Log in</Nav.Link>
-              <Nav.Link onClick={handleLogout}>Log out</Nav.Link>
+              {location.pathname !== "/" && (
+                <Nav.Link href="/">Sign up</Nav.Link>
+              )}
+              {!token && <Nav.Link href="/login">Log in</Nav.Link>}
+              {token && <Nav.Link onClick={handleLogout}>Log out</Nav.Link>}
             </Nav>
           </Navbar.Collapse>
         </Container>
