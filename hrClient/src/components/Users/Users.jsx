@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import axios from "axios";
-import NavigationBar from "./Navbar";
+import NavigationBar from "../NavigationBar";
 
 function Users() {
   const [users, setUsers] = useState([]);
@@ -73,7 +73,7 @@ function Users() {
                     <td>
                       <div className="btn-group">
                         <Link
-                          to={`/update/${user._id}`}
+                          to={`/employees/${user._id}`}
                           className="btn btn-primary mr-2"
                         >
                           Update

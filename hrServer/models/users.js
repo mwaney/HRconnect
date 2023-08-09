@@ -1,5 +1,13 @@
 const mongoose = require("mongoose");
 const Joi = require("joi");
+const jwt = require("jsonwebtoken");
+require("dotenv").config();
+
+const secret = process.env.SECRET;
+if (!secret) {
+  console.log("Fatal Error: Secret environment variable is not defined");
+  process.exit(1);
+}
 
 const userSchema = mongoose.Schema({
   userName: {
@@ -23,6 +31,11 @@ const userSchema = mongoose.Schema({
     select: false,
   },
 });
+
+userSchema.methods.generateAuthToken = function () {
+  const token = jwt.sign({ _id: this._id }, secret);
+  return token;
+};
 
 const validateUser = (user) => {
   const schema = Joi.object({

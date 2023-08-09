@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import NavigationBar from "./Navbar";
+import NavigationBar from "../NavigationBar";
 
 function OneUSer() {
   const [user, setUser] = useState([]);

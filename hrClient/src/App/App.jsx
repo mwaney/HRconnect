@@ -4,7 +4,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import Users from "../components/Users";
 import CreateUser from "../components/CreateUser";
 import UpdateUser from "../components/UpdateUser";
-import OneUSer from "../components/OneUSer";
+import OneUSer from "../components/OneUser";
 import SignUp from "../components/SignUp";
 import Login from "../components/Login";
 

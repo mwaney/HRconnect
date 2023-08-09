@@ -26,7 +26,8 @@ router.post("/", async (req, res) => {
       email,
       password: hashedPassword,
     });
-    return res.status(201).send(person);
+    const token = person.generateAuthToken();
+    return res.header("x-auth-token", token).status(201).send(person);
   } catch (err) {
     console.log("Unable to Create the Person to auth", err.message);
     return res.status(400).send("Unable to create Person to auth");
