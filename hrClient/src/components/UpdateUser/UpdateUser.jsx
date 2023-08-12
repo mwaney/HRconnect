@@ -1,94 +1,183 @@
-import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { Formik, Form, Field } from "formik";
+import * as Yup from "yup";
 import axios from "axios";
 import NavigationBar from "../NavigationBar";
+import { useEffect, useState } from "react";
+
+const schema = Yup.object({
+  name: Yup.string()
+    .required("Name is required")
+    .min(2, "name should be atleast 2 characters")
+    .max(50, "name should have 50 or less characters"),
+  email: Yup.string()
+    .matches(
+      /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
+      "Invalid email address"
+    )
+    .required("email is required")
+    .min(7, "email should have atleast 7 characters")
+    .max(255, "email should have 255 or less characters"),
+  phone: Yup.string()
+    .required("phone number is required")
+    .min(6, "phone should have atleast 6 characters")
+    .max(20, "phone should have 20 or less characters"),
+  age: Yup.number()
+    .integer("age must me a whole number")
+    .min(18, "age must be at least 18 years")
+    .max(70, "age must be less than or equal to 70"),
+});
 
 function UpdateUser() {
   const { id } = useParams();
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [age, setAge] = useState("");
   const navigate = useNavigate();
+  const [initialValues, setInitialValues] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    age: "",
+  });
+
+  const [loading, setLoading] = useState(true);
+  const [showAlert, setShowAlert] = useState(false);
 
   useEffect(() => {
-    axios
-      .get("http://localhost:5656/api/employees/" + id)
-      .then((result) => {
-        console.log(result);
-        setName(result.data.name);
-        setEmail(result.data.email);
-        setPhone(result.data.phone);
-        setAge(result.data.age);
-      })
-      .catch((err) => console.log(err));
-  }, [id]);
+    const token = localStorage.getItem("token");
+    if (token) {
+      axios
+        .get(`http://localhost:5656/api/employees/${id}`, {
+          headers: {
+            "x-auth-token": token,
+          },
+        })
+        .then((result) => {
+          const { name, email, phone, age } = result.data;
+          setInitialValues({
+            name,
+            email,
+            phone,
+            age,
+          });
+          setLoading(false);
+        })
+        .catch((err) => {
+          console.log(err);
+          setLoading(false);
+        });
+    } else {
+      navigate("/login");
+    }
+  }, [id, navigate]);
 
-  const Update = (event) => {
-    event.preventDefault();
+  const handleSubmit = (values, { setSubmitting }) => {
+    const token = localStorage.getItem("token");
 
-    axios
-      .put("http://localhost:5656/api/employees/" + id, {
-        name,
-        email,
-        phone,
-        age,
-      })
-      .then((result) => {
-        console.log(result);
-        navigate("/employees");
-      })
-      .catch((err) => console.log(err));
+    if (token) {
+      axios
+        .put(`http://localhost:5656/api/employees/${id}`, values, {
+          headers: {
+            "x-auth-token": token,
+          },
+        })
+        .then((result) => {
+          console.log(result);
+          setShowAlert(true);
+          setTimeout(() => {
+            navigate("/employees");
+          }, 1000);
+        })
+        .catch((err) => console.log(err))
+        .finally(() => {
+          setSubmitting(false);
+        });
+    } else {
+      navigate("/login");
+    }
   };
+
   return (
     <>
       <NavigationBar />
       <div className="d-flex vh-100 bg-primary justify-content-center align-items-center">
         <div className="w-50 bg-white rounded p-3">
-          <form onSubmit={Update}>
-            <h2>Update Employee</h2>
-            <div className="mb-2">
-              <label htmlFor="">Name</label>
-              <input
-                type="text"
-                placeholder="Enter Name"
-                className="form-control"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-              />
+          {showAlert && (
+            <div className="alert alert-success" role="alert">
+              Employee has been updated successfully!
             </div>
-            <div className="mb-2">
-              <label htmlFor="">Email</label>
-              <input
-                type="email"
-                placeholder="Enter Email"
-                className="form-control"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-            </div>
-            <div className="mb-2">
-              <label htmlFor="">Phone</label>
-              <input
-                type="tel"
-                placeholder="Enter Phone Number"
-                className="form-control"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-              />
-            </div>
-            <div className="mb-2">
-              <label htmlFor="">Age</label>
-              <input
-                type="number"
-                placeholder="Enter Age"
-                className="form-control"
-                onChange={(e) => setAge(e.target.value)}
-                value={age}
-              />
-            </div>
-            <button className="btn btn-success">Update</button>
-          </form>
+          )}
+          {!loading && (
+            <Formik
+              initialValues={initialValues}
+              validationSchema={schema}
+              onSubmit={handleSubmit}
+            >
+              {({ getFieldProps, errors, touched }) => (
+                <Form>
+                  <h2>Update Employee</h2>
+                  <div className="mb-3">
+                    <label htmlFor="name">Name</label>
+                    <Field
+                      type="text"
+                      id="name"
+                      name="name"
+                      placeholder="Enter Name..."
+                      className="form-control"
+                      {...getFieldProps("name")}
+                    />
+                    {errors.name && touched.name && (
+                      <div className="text-danger">{errors?.name}</div>
+                    )}
+                  </div>
+                  <div className="mb-3">
+                    <label htmlFor="email">Email</label>
+                    <Field
+                      type="text"
+                      id="email"
+                      name="email"
+                      placeholder="Enter Email..."
+                      className="form-control"
+                      {...getFieldProps("email")}
+                    />
+                    {errors.email && touched.email && (
+                      <div className="text-danger">{errors?.email}</div>
+                    )}
+                  </div>
+                  <div className="mb-3">
+                    <label htmlFor="phone">Phone</label>
+                    <Field
+                      type="text"
+                      id="phone"
+                      name="phone"
+                      placeholder="Enter Phone Number..."
+                      className="form-control"
+                      {...getFieldProps("phone")}
+                    />
+                    {errors.phone && touched.phone && (
+                      <div className="text-danger">{errors?.email}</div>
+                    )}
+                  </div>
+                  <div className="mb-3">
+                    <label htmlFor="age">Age</label>
+                    <Field
+                      type="number"
+                      id="age"
+                      name="age"
+                      placeholder="Enter your Age..."
+                      className="form-control"
+                      {...getFieldProps("age")}
+                    />
+                    {errors.age && touched.age && (
+                      <div className="text-danger">{errors?.age}</div>
+                    )}
+                  </div>
+
+                  <button type="submit" className="btn btn-success">
+                    Update
+                  </button>
+                </Form>
+              )}
+            </Formik>
+          )}
         </div>
       </div>
     </>

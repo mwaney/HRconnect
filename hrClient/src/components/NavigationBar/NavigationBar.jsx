@@ -23,7 +23,7 @@ function NavigationBar() {
             className="justify-content-end"
           >
             <Nav>
-              {location.pathname !== "/" && (
+              {location.pathname == "/login" && (
                 <Nav.Link href="/">Sign up</Nav.Link>
               )}
               {!token && <Nav.Link href="/login">Log in</Nav.Link>}

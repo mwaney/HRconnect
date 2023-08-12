@@ -1,12 +1,25 @@
-const Employees = require("../models/employees");
+const { EmployeesModel, validateEmployee } = require("../models/employees");
 
 const AddEmployee = async (req, res) => {
   try {
+    const { error } = validateEmployee(req.body);
+    if (error) return res.status(400).send(error.details[0].message);
+
     const { name, email, phone, age } = req.body;
-    if (!name || !email || !phone || !age) {
-      res.status(400).res.send("All fields are mandatory");
+    if (!name) {
+      res.status(400).res.send("Name is required");
     }
-    const employee = await Employees.create(req.body);
+    if (!email) {
+      res.status(400).res.send("Email is required");
+    }
+    if (!phone) {
+      res.status(400).res.send("Phone is required");
+    }
+    if (!age) {
+      res.status(400).res.send("Age is required");
+    }
+
+    const employee = await EmployeesModel.create({ name, email, phone, age });
     res.status(201).send(employee);
   } catch (err) {
     res.status(400).send("Unable to Create the employee");
@@ -16,7 +29,7 @@ const AddEmployee = async (req, res) => {
 
 const getEmployees = async (req, res) => {
   try {
-    const employee = await Employees.find();
+    const employee = await EmployeesModel.find();
     res.status(200).send(employee);
   } catch (err) {
     res.status(400).send("Can't get employees");
