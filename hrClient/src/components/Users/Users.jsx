@@ -43,8 +43,13 @@ function Users() {
   }, [id]);
 
   const handleDelete = (id) => {
+    const token = localStorage.getItem("token");
     axios
-      .delete("http://localhost:5656/api/employees/" + id)
+      .delete("http://localhost:5656/api/employees/" + id, {
+        headers: {
+          "x-auth-token": token,
+        },
+      })
       .then((result) => {
         console.log(result);
         window.location.reload();

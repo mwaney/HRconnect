@@ -38,7 +38,7 @@ const getEmployees = async (req, res) => {
 };
 const getEmployee = async (req, res) => {
   try {
-    const employee = await Employees.findById(req.params.id);
+    const employee = await EmployeesModel.findById(req.params.id);
     if (!employee) return res.status(400).send("Employee doesn't exist");
 
     res.status(200).send(employee);
@@ -49,10 +49,10 @@ const getEmployee = async (req, res) => {
 };
 const updateEmployee = async (req, res) => {
   try {
-    const employee = await Employees.findById(req.params.id);
+    const employee = await EmployeesModel.findById(req.params.id);
     if (!employee) return res.status(400).send("Employee doesn't exist");
 
-    const updatedEmployee = await Employees.findByIdAndUpdate(
+    const updatedEmployee = await EmployeesModel.findByIdAndUpdate(
       employee._id,
       req.body,
       { new: true }
@@ -65,10 +65,10 @@ const updateEmployee = async (req, res) => {
 };
 const deleteEmployee = async (req, res) => {
   try {
-    const employee = await Employees.findById(req.params.id);
+    const employee = await EmployeesModel.findById(req.params.id);
     if (!employee) return res.status(400).send("Employee doesn't exist");
 
-    const deletedEmployee = await Employees.findByIdAndDelete({
+    const deletedEmployee = await EmployeesModel.findByIdAndDelete({
       _id: employee._id,
     });
     res.status(200).send(employee);
