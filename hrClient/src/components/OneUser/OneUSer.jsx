@@ -10,7 +10,7 @@ function OneUSer() {
 
   useEffect(() => {
     const navigateToLogin = () => {
-      navigate("/login");
+      navigate("/");
     };
     const token = localStorage.getItem("token");
     if (token) {
@@ -50,9 +50,14 @@ function OneUSer() {
                 <li className="list-group-item">Cell: {user.phone}</li>
                 <li className="list-group-item">Age: {user.age}</li>
               </ul>
-              <Link to="/employees" className="btn btn-primary">
-                Go Back
-              </Link>
+              <div className="d-flex justify-content-between align-items-center mt-3">
+                <Link to="/employees" className="btn btn-primary">
+                  Go Back
+                </Link>
+                <Link to={`/employees/${user._id}`} className="btn btn-primary">
+                  Update
+                </Link>
+              </div>
             </div>
           </div>
         </div>

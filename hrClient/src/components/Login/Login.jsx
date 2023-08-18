@@ -50,17 +50,6 @@ function Login() {
   };
   return (
     <Container>
-      {error && (
-        <div className="alert alert-danger alert-dismissible mt-3" role="alert">
-          {error}
-          <button
-            type="button"
-            className="btn-close"
-            aria-label="Close"
-            onClick={handleAlertDismiss}
-          ></button>
-        </div>
-      )}
       <Row>
         <Col
           className="mt-5 pt-5"
@@ -100,7 +89,20 @@ function Login() {
                   </div>
                 ) : null}
               </Form.Group>
-
+              {error && (
+                <div
+                  className="alert alert-danger alert-dismissible mt-3"
+                  role="alert"
+                >
+                  {error}
+                  <button
+                    type="button"
+                    className="btn-close"
+                    aria-label="Close"
+                    onClick={handleAlertDismiss}
+                  ></button>
+                </div>
+              )}
               <div className="d-grid mb-3">
                 <Button
                   variant="primary"
@@ -113,7 +115,7 @@ function Login() {
             </Form>
             <p className="text-center">
               <small>
-                Dont Have an Account? <a href="/">Register</a>
+                Dont Have an Account? <a href="/signup">Register</a>
               </small>
             </p>
             <p className="text-center ">

@@ -2,8 +2,9 @@ import { useState } from "react";
 import axios from "axios";
 import * as Yup from "yup";
 import { Formik, Form, Field } from "formik";
-import { useNavigate } from "react-router-dom";
-import NavigationBar from "../NavigationBar";
+// import { useNavigate } from "react-router-dom";
+import { Button, Modal, Spinner } from "react-bootstrap";
+import PropTypes from "prop-types";
 
 const schema = Yup.object({
   name: Yup.string()
@@ -35,55 +36,60 @@ const initialValues = {
   age: "",
 };
 
-function CreateUser() {
+function CreateUser({ onUserCreate }) {
+  const [show, setShow] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
-  const navigate = useNavigate();
 
   const handleSubmit = (values, { setSubmitting }) => {
     const token = localStorage.getItem("token");
 
     if (token) {
+      setIsLoading(true);
       axios
         .post(`http://localhost:5656/api/employees`, values, {
           headers: {
             "x-auth-token": token,
           },
         })
-        .then((response) => {
-          console.log(response);
+        .then(({ data: user }) => {
+          console.log(user);
           setShowAlert(true);
-          setTimeout(() => {
-            navigate("/employees");
-          }, 1200);
+          onUserCreate(user);
+          handleClose();
         })
         .catch((err) => console.log(err))
         .finally(() => {
           setSubmitting(false);
+          setIsLoading(false);
         });
     } else {
-      navigate("/login");
+      // navigate("/login");
     }
   };
 
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+
   return (
     <>
-      <NavigationBar />
+      <Button variant="primary" onClick={handleShow}>
+        Add +
+      </Button>
 
-      <div className="d-flex vh-100 bg-primary justify-content-center align-items-center">
-        <div className="w-50 bg-white rounded p-3">
-          {showAlert && (
-            <div className="alert alert-success" role="alert">
-              Successfully Created Employee
-            </div>
-          )}
-          <Formik
-            initialValues={initialValues}
-            validationSchema={schema}
-            onSubmit={handleSubmit}
-          >
-            {({ getFieldProps, errors, touched }) => (
-              <Form>
-                <h2>Add Employee</h2>
+      <Modal show={show} onHide={handleClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>Add Employee</Modal.Title>
+        </Modal.Header>
+
+        <Formik
+          initialValues={initialValues}
+          validationSchema={schema}
+          onSubmit={handleSubmit}
+        >
+          {({ getFieldProps, errors, touched }) => (
+            <Form>
+              <Modal.Body>
                 <div className="mb-3">
                   <label htmlFor="name">Name</label>
                   <Field
@@ -138,57 +144,41 @@ function CreateUser() {
                     <div className="text-danger">{errors.age}</div>
                   )}
                 </div>
-                <button type="submit" className="btn btn-success">
-                  Create
-                </button>
-              </Form>
-            )}
-          </Formik>
+                {showAlert && (
+                  <div className="alert alert-success" role="alert">
+                    Successfully Created Employee
+                  </div>
+                )}
+              </Modal.Body>
 
-          {/* <form onSubmit={Submit}>
-            <h2>Add Employee</h2>
-            <div className="mb-2">
-              <label htmlFor="">Name</label>
-              <input
-                type="text"
-                placeholder="Enter Name"
-                className="form-control"
-                onChange={(e) => setName(e.target.value)}
-              />
-            </div>
-            <div className="mb-2">
-              <label htmlFor="">Email</label>
-              <input
-                type="email"
-                placeholder="Enter Email"
-                className="form-control"
-                onChange={(e) => setEmail(e.target.value)}
-              />
-            </div>
-            <div className="mb-2">
-              <label htmlFor="">Phone</label>
-              <input
-                type="tel"
-                placeholder="Enter Phone Number"
-                className="form-control"
-                onChange={(e) => setPhone(e.target.value)}
-              />
-            </div>
-            <div className="mb-2">
-              <label htmlFor="">Age</label>
-              <input
-                type="number"
-                placeholder="Enter Age"
-                className="form-control"
-                onChange={(e) => setAge(e.target.value)}
-              />
-            </div>
-            <button className="btn btn-success">Create</button>
-          </form> */}
-        </div>
-      </div>
+              <Modal.Footer>
+                <Button variant="outline-secondary" onClick={handleClose}>
+                  Close
+                </Button>
+                <Button variant="primary" type="submit" disabled={isLoading}>
+                  {isLoading && (
+                    <Spinner
+                      size="sm"
+                      className="me-2"
+                      animation="border"
+                      role="status"
+                    >
+                      <span className="visually-hidden">Loading...</span>
+                    </Spinner>
+                  )}
+                  Create
+                </Button>
+              </Modal.Footer>
+            </Form>
+          )}
+        </Formik>
+      </Modal>
     </>
   );
 }
+
+CreateUser.propTypes = {
+  onUserCreate: PropTypes.func.isRequired,
+};
 
 export default CreateUser;

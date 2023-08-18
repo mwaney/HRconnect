@@ -9,7 +9,7 @@ function NavigationBar() {
 
   const handleLogout = () => {
     localStorage.removeItem("token");
-    navigate("/login");
+    navigate("/");
     console.log("Log out");
   };
   return (
@@ -23,10 +23,10 @@ function NavigationBar() {
             className="justify-content-end"
           >
             <Nav>
-              {location.pathname == "/login" && (
+              {location.pathname == "/" && (
                 <Nav.Link href="/">Sign up</Nav.Link>
               )}
-              {!token && <Nav.Link href="/login">Log in</Nav.Link>}
+              {!token && <Nav.Link href="/">Log in</Nav.Link>}
               {token && <Nav.Link onClick={handleLogout}>Log out</Nav.Link>}
             </Nav>
           </Navbar.Collapse>

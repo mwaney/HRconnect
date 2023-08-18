@@ -41,7 +41,7 @@ function SignUp() {
         .then((response) => {
           console.log(response.data);
           alert(JSON.stringify(response.data, null, 2));
-          navigate("/login");
+          navigate("/");
         })
         .catch((error) => {
           if (error.response && error.response.status === 409) {
@@ -119,7 +119,7 @@ function SignUp() {
                 ) : null}
               </Form.Group>
               <div className="mb-3">
-                Already Have an Account? <a href="/login">Login</a>
+                Already Have an Account? <a href="/">Login</a>
               </div>
               <Button variant="warning" type="submit" className="w-100">
                 Sign Up

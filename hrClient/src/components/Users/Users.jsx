@@ -2,6 +2,9 @@ import { useEffect, useState } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import NavigationBar from "../NavigationBar";
+import { Table, Container, Row, Col, Card, Button } from "react-bootstrap";
+import CreateUser from "../CreateUser/CreateUser";
+import UpdateUser from "../UpdateUser/UpdateUser";
 
 function getUsers(token) {
   return axios.get("http://localhost:5656/api/employees", {
@@ -20,7 +23,7 @@ function Users() {
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
     if (!storedToken) {
-      navigate("/login");
+      navigate("/");
       return;
     }
 
@@ -28,7 +31,7 @@ function Users() {
       .then((result) => setUsers(result.data))
       .catch((err) => {
         if (err.code == "ERR_BAD_REQUEST") {
-          navigate("/login");
+          navigate("/");
         }
       });
   }, []);
@@ -56,69 +59,87 @@ function Users() {
       })
       .catch((err) => console.log(err));
   };
+
+  const handleUserCreate = (user) => {
+    setUsers((prevUsers) => {
+      return [...prevUsers, user];
+    });
+  };
+
+  const handleFetchUser = () => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      getUsers(token)
+        .then((result) => setUsers(result.data))
+        .catch((err) => {
+          if (err.code === "ERR_BAD_REQUEST") {
+            navigate("/");
+          }
+        });
+    }
+  };
   return (
     <>
       <NavigationBar />
-      <div className="d-flex flex-column vh-100 bg-primary justify-content-center align-items-center">
-        <div className="mb-3">
-          <h1
-            style={{
-              fontWeight: "bold",
-              fontFamily: "fantasy",
-              color: "#FFF",
-            }}
-          >
-            HrConnect Employee DashBoard
-          </h1>
-        </div>
-        <div className="w-70 bg-white rounded p-3">
-          <Link to="/create" className="btn btn-warning mb-2">
-            Add +
-          </Link>
-          <table className="table">
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Phone</th>
-                <th>Age</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {users.map((user) => {
-                return (
-                  <tr key={user._id}>
-                    <td>{user.name}</td>
-                    <td>{user.email}</td>
-                    <td>{user.phone}</td>
-                    <td>{user.age}</td>
-                    <td>
-                      <div className="btn-group">
-                        <Link
-                          to={`/employees/${user._id}`}
-                          className="btn btn-primary mr-2"
-                        >
-                          Update
-                        </Link>
-                        <button
-                          className="btn btn-danger mr-2"
-                          onClick={() => handleDelete(user._id)}
-                        >
-                          Delete
-                        </button>
-                        <Link to={`/${user._id}`} className="btn btn-secondary">
-                          View
-                        </Link>
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
-      </div>
+      <Container>
+        <Row>
+          <Col>
+            <div className="mb-3">
+              <h1 className="text-muted">
+                <small>Employees</small>
+              </h1>
+            </div>
+            <Card className="shadow-sm border-0">
+              <Card.Body>
+                <CreateUser onUserCreate={handleUserCreate} />
+                <div className="table-responsive">
+                  <Table striped>
+                    <thead>
+                      <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Age</th>
+                        <th>Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {users.map((user) => {
+                        return (
+                          <tr key={user._id}>
+                            <td>
+                              <Link to={`/${user._id}`}>{user.name}</Link>
+                            </td>
+                            <td>{user.email}</td>
+                            <td>{user.phone}</td>
+                            <td>{user.age}</td>
+                            <td>
+                              <div className="btn-group">
+                                <UpdateUser
+                                  userId={user._id}
+                                  onUpdateUser={handleFetchUser}
+                                />
+
+                                <Button
+                                  size="sm"
+                                  variant="outline-danger"
+                                  onClick={() => handleDelete(user._id)}
+                                >
+                                  Delete
+                                </Button>
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </Table>
+                </div>
+              </Card.Body>
+            </Card>
+          </Col>
+        </Row>
+      </Container>
     </>
   );
 }
