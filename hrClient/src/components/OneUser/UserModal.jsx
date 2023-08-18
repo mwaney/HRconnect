@@ -1,4 +1,5 @@
 import { Modal, Button } from "react-bootstrap";
+import PropTypes from "prop-types";
 
 function UserModal({ user, onClose }) {
   return (
@@ -11,7 +12,6 @@ function UserModal({ user, onClose }) {
           className="card-img-top"
           src="https://img.freepik.com/premium-photo/small-boy-colorful-background-funny-cartoon-character-school-kid-3d-generative-ai_58409-28883.jpg?w=2000"
           alt="Card"
-          style={{ maxWidth: "100%" }}
         />
         <h5>Email: {user.email}</h5>
         <h5>Cell: {user.phone}</h5>
@@ -26,4 +26,8 @@ function UserModal({ user, onClose }) {
   );
 }
 
+UserModal.propTypes = {
+  user: PropTypes.object.isRequired,
+  onClose: PropTypes.func.isRequired,
+};
 export default UserModal;
