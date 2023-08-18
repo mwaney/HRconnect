@@ -14,6 +14,7 @@ import {
 } from "react-bootstrap";
 import CreateUser from "../CreateUser/CreateUser";
 import UpdateUser from "../UpdateUser/UpdateUser";
+import UserModal from "../OneUser/UserModal";
 
 function getUsers(token) {
   return axios.get("http://localhost:5656/api/employees", {
@@ -27,6 +28,7 @@ function Users() {
   const [users, setUsers] = useState([]);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [userToDelete, setUserToDelete] = useState(null);
+  const [selectedUser, setSelectedUser] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -118,7 +120,12 @@ function Users() {
                         return (
                           <tr key={user._id}>
                             <td>
-                              <Link to={`/${user._id}`}>{user.name}</Link>
+                              <Link
+                                to="#"
+                                onClick={() => setSelectedUser(user)}
+                              >
+                                {user.name}
+                              </Link>
                             </td>
                             <td>{user.email}</td>
                             <td>{user.phone}</td>
@@ -150,6 +157,9 @@ function Users() {
           </Col>
         </Row>
       </Container>
+      {selectedUser && (
+        <UserModal onClose={() => setSelectedUser(null)} user={selectedUser} />
+      )}
       <Modal
         show={showDeleteModal}
         onHide={hideDeleteConfirmation}
