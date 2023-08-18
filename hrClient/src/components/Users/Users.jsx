@@ -1,8 +1,17 @@
 import { useEffect, useState } from "react";
-import { Link, useParams, useNavigate } from "react-router-dom";
+import "./Users.css";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import NavigationBar from "../NavigationBar";
-import { Table, Container, Row, Col, Card, Button } from "react-bootstrap";
+import {
+  Table,
+  Container,
+  Row,
+  Col,
+  Card,
+  Button,
+  Modal,
+} from "react-bootstrap";
 import CreateUser from "../CreateUser/CreateUser";
 import UpdateUser from "../UpdateUser/UpdateUser";
 
@@ -16,8 +25,8 @@ function getUsers(token) {
 
 function Users() {
   const [users, setUsers] = useState([]);
-  const [user, setUser] = useState([]);
-  const { id } = useParams();
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [userToDelete, setUserToDelete] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -34,16 +43,17 @@ function Users() {
           navigate("/");
         }
       });
-  }, []);
+  }, [navigate]);
 
-  useEffect(() => {
-    if (id) {
-      axios
-        .get("http://localhost:5656/api/employees/" + id)
-        .then((result) => setUser(result.data))
-        .catch((err) => console.log(err));
-    }
-  }, [id]);
+  const showDeleteConfirmation = (user) => {
+    setUserToDelete(user);
+    setShowDeleteModal(true);
+  };
+
+  const hideDeleteConfirmation = () => {
+    setUserToDelete(null);
+    setShowDeleteModal(false);
+  };
 
   const handleDelete = (id) => {
     const token = localStorage.getItem("token");
@@ -123,7 +133,7 @@ function Users() {
                                 <Button
                                   size="sm"
                                   variant="outline-danger"
-                                  onClick={() => handleDelete(user._id)}
+                                  onClick={() => showDeleteConfirmation(user)}
                                 >
                                   Delete
                                 </Button>
@@ -140,6 +150,35 @@ function Users() {
           </Col>
         </Row>
       </Container>
+      <Modal
+        show={showDeleteModal}
+        onHide={hideDeleteConfirmation}
+        backdrop="static"
+        keyboard={false}
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>Confirm Delete</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {userToDelete && (
+            <p>Are you sure you want to delete {userToDelete.name}?</p>
+          )}
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={hideDeleteConfirmation}>
+            Cancel
+          </Button>
+          <Button
+            variant="danger"
+            onClick={() => {
+              handleDelete(userToDelete._id);
+              hideDeleteConfirmation();
+            }}
+          >
+            Delete
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </>
   );
 }

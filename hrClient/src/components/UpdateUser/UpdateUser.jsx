@@ -111,7 +111,11 @@ function UpdateUser({ userId, onUpdateUser }) {
       <Button variant="outline-primary" size="sm" onClick={handleShow}>
         Update
       </Button>
-      <Modal show={show} onHide={handleClose}>
+      <Modal
+        show={show}
+        onHide={handleClose}
+        style={{ backgroundColor: "rgba(0, 0, 0, 0)", zIndex: 1050 }}
+      >
         <Modal.Header closeButton>
           <Modal.Title>Update Employee</Modal.Title>
         </Modal.Header>
