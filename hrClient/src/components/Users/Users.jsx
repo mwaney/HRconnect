@@ -67,7 +67,9 @@ function Users() {
       })
       .then((result) => {
         console.log(result);
-        window.location.reload();
+        setUsers((prevUsers) => prevUsers.filter((user) => user._id !== id));
+        // users.filter((user) => user._id !== result._id);
+        // window.location.reload();
       })
       .catch((err) => console.log(err));
   };
@@ -78,18 +80,15 @@ function Users() {
     });
   };
 
-  const handleFetchUser = () => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      getUsers(token)
-        .then((result) => setUsers(result.data))
-        .catch((err) => {
-          if (err.code === "ERR_BAD_REQUEST") {
-            navigate("/");
-          }
-        });
-    }
+  const handleUpdateUser = (user) => {
+    setUsers((prevUsers) => {
+      return prevUsers.map((prevUser) => {
+        if (prevUser._id === user._id) return user;
+        return prevUser;
+      });
+    });
   };
+
   return (
     <>
       <NavigationBar />
@@ -133,8 +132,8 @@ function Users() {
                             <td>
                               <div className="btn-group">
                                 <UpdateUser
-                                  userId={user._id}
-                                  onUpdateUser={handleFetchUser}
+                                  user={user}
+                                  onUpdateUser={handleUpdateUser}
                                 />
 
                                 <Button

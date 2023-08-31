@@ -3,7 +3,7 @@ import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { Button, Modal } from "react-bootstrap";
+import { Button, Modal, Spinner } from "react-bootstrap";
 import PropTypes from "prop-types";
 
 const schema = Yup.object({
@@ -29,7 +29,7 @@ const schema = Yup.object({
     .max(70, "age must be less than or equal to 70"),
 });
 
-function UpdateUser({ userId, onUpdateUser }) {
+function UpdateUser({ user, onUpdateUser }) {
   const [show, setShow] = useState(false);
 
   const handleClose = () => setShow(false);
@@ -37,69 +37,34 @@ function UpdateUser({ userId, onUpdateUser }) {
 
   // const { id } = useParams();
   const navigate = useNavigate();
-  const [initialValues, setInitialValues] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    age: "",
-  });
 
-  const [loading, setLoading] = useState(true);
-  const [showAlert, setShowAlert] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/");
+    }
+  }, [navigate]);
+
+  const handleSubmit = (values) => {
+    const token = localStorage.getItem("token");
     if (token) {
       setIsLoading(true);
       axios
-        .get(`http://localhost:5656/api/employees/${userId}`, {
+        .put(`http://localhost:5656/api/employees/${user._id}`, values, {
           headers: {
             "x-auth-token": token,
           },
         })
-        .then((result) => {
-          const { name, email, phone, age } = result.data;
-          setInitialValues({
-            name,
-            email,
-            phone,
-            age,
-          });
-          setLoading(false);
-        })
-        .catch((err) => {
-          console.log(err);
-          setLoading(false);
-        })
-        .finally(() => setIsLoading(false));
-    } else {
-      navigate("/");
-    }
-  }, [userId, navigate]);
-
-  const handleSubmit = (values, { setSubmitting }) => {
-    const token = localStorage.getItem("token");
-
-    if (token) {
-      axios
-        .put(`http://localhost:5656/api/employees/${userId}`, values, {
-          headers: {
-            "x-auth-token": token,
-          },
-        })
-        .then((result) => {
-          console.log(result);
-          setShowAlert(true);
-          onUpdateUser();
-          setTimeout(() => {
-            setShowAlert(false);
-            handleClose();
-          }, 1000);
+        .then(({ data: user }) => {
+          console.log(user);
+          onUpdateUser(user);
+          handleClose();
         })
         .catch((err) => console.log(err))
         .finally(() => {
-          setSubmitting(false);
+          setIsLoading(false);
         });
     } else {
       navigate("/");
@@ -119,97 +84,105 @@ function UpdateUser({ userId, onUpdateUser }) {
         <Modal.Header closeButton>
           <Modal.Title>Update Employee</Modal.Title>
         </Modal.Header>
-        {!loading && (
-          <Formik
-            initialValues={initialValues}
-            validationSchema={schema}
-            onSubmit={handleSubmit}
-          >
-            {({ getFieldProps, errors, touched }) => (
-              <Form>
-                <Modal.Body>
-                  <div className="mb-3">
-                    <label htmlFor="name">Name</label>
-                    <Field
-                      type="text"
-                      id="name"
-                      name="name"
-                      placeholder="Enter Name..."
-                      className="form-control"
-                      {...getFieldProps("name")}
-                    />
-                    {errors.name && touched.name && (
-                      <div className="text-danger">{errors?.name}</div>
-                    )}
-                  </div>
-                  <div className="mb-3">
-                    <label htmlFor="email">Email</label>
-                    <Field
-                      type="text"
-                      id="email"
-                      name="email"
-                      placeholder="Enter Email..."
-                      className="form-control"
-                      {...getFieldProps("email")}
-                    />
-                    {errors.email && touched.email && (
-                      <div className="text-danger">{errors?.email}</div>
-                    )}
-                  </div>
-                  <div className="mb-3">
-                    <label htmlFor="phone">Phone</label>
-                    <Field
-                      type="text"
-                      id="phone"
-                      name="phone"
-                      placeholder="Enter Phone Number..."
-                      className="form-control"
-                      {...getFieldProps("phone")}
-                    />
-                    {errors.phone && touched.phone && (
-                      <div className="text-danger">{errors?.email}</div>
-                    )}
-                  </div>
-                  <div className="mb-3">
-                    <label htmlFor="age">Age</label>
-                    <Field
-                      type="number"
-                      id="age"
-                      name="age"
-                      placeholder="Enter your Age..."
-                      className="form-control"
-                      {...getFieldProps("age")}
-                    />
-                    {errors.age && touched.age && (
-                      <div className="text-danger">{errors?.age}</div>
-                    )}
-                  </div>
 
-                  {showAlert && (
-                    <div className="alert alert-success" role="alert">
-                      Employee has been updated successfully!
-                    </div>
+        <Formik
+          initialValues={{
+            name: user.name,
+            email: user.email,
+            phone: user.phone,
+            age: user.age,
+          }}
+          validationSchema={schema}
+          onSubmit={handleSubmit}
+        >
+          {({ getFieldProps, errors, touched }) => (
+            <Form>
+              <Modal.Body>
+                <div className="mb-3">
+                  <label htmlFor="name">Name</label>
+                  <Field
+                    type="text"
+                    id="name"
+                    name="name"
+                    placeholder="Enter Name..."
+                    className="form-control"
+                    {...getFieldProps("name")}
+                  />
+                  {errors.name && touched.name && (
+                    <div className="text-danger">{errors?.name}</div>
                   )}
-                </Modal.Body>
-                <Modal.Footer>
-                  <Button variant="secondary" onClick={handleClose}>
-                    Close
-                  </Button>
-                  <Button variant="primary" type="submit" disabled={isLoading}>
-                    Update
-                  </Button>
-                </Modal.Footer>
-              </Form>
-            )}
-          </Formik>
-        )}
+                </div>
+                <div className="mb-3">
+                  <label htmlFor="email">Email</label>
+                  <Field
+                    type="text"
+                    id="email"
+                    name="email"
+                    placeholder="Enter Email..."
+                    className="form-control"
+                    {...getFieldProps("email")}
+                  />
+                  {errors.email && touched.email && (
+                    <div className="text-danger">{errors?.email}</div>
+                  )}
+                </div>
+                <div className="mb-3">
+                  <label htmlFor="phone">Phone</label>
+                  <Field
+                    type="text"
+                    id="phone"
+                    name="phone"
+                    placeholder="Enter Phone Number..."
+                    className="form-control"
+                    {...getFieldProps("phone")}
+                  />
+                  {errors.phone && touched.phone && (
+                    <div className="text-danger">{errors?.email}</div>
+                  )}
+                </div>
+                <div className="mb-3">
+                  <label htmlFor="age">Age</label>
+                  <Field
+                    type="number"
+                    id="age"
+                    name="age"
+                    placeholder="Enter your Age..."
+                    className="form-control"
+                    {...getFieldProps("age")}
+                  />
+                  {errors.age && touched.age && (
+                    <div className="text-danger">{errors?.age}</div>
+                  )}
+                </div>
+              </Modal.Body>
+              <Modal.Footer>
+                <Button variant="secondary" onClick={handleClose}>
+                  Close
+                </Button>
+                <Button variant="primary" type="submit" disabled={isLoading}>
+                  {isLoading && (
+                    <Spinner
+                      size="sm"
+                      className="me-2"
+                      animation="border"
+                      role="status"
+                    >
+                      <span className="visually-hidden">Loading...</span>
+                    </Spinner>
+                  )}
+                  Update
+                </Button>
+              </Modal.Footer>
+            </Form>
+          )}
+        </Formik>
       </Modal>
     </>
   );
 }
 
 UpdateUser.propTypes = {
-  userId: PropTypes.string.isRequired,
+  user: PropTypes.object.isRequired,
   onUpdateUser: PropTypes.func.isRequired,
 };
 
