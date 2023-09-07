@@ -3,18 +3,11 @@ import "./Users.css";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import NavigationBar from "../NavigationBar";
-import {
-  Table,
-  Container,
-  Row,
-  Col,
-  Card,
-  Button,
-  Modal,
-} from "react-bootstrap";
+import { Table, Container, Row, Col, Card } from "react-bootstrap";
 import CreateUser from "../CreateUser/CreateUser";
 import UpdateUser from "../UpdateUser/UpdateUser";
 import UserModal from "../OneUser/UserModal";
+import Delete from "../Delete/Delete";
 
 function getUsers(token) {
   return axios.get("http://localhost:5656/api/employees", {
@@ -26,9 +19,9 @@ function getUsers(token) {
 
 function Users() {
   const [users, setUsers] = useState([]);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [userToDelete, setUserToDelete] = useState(null);
+  // const [userToDelete, setUserToDelete] = useState(null);
   const [selectedUser, setSelectedUser] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -39,7 +32,10 @@ function Users() {
     }
 
     getUsers(storedToken)
-      .then((result) => setUsers(result.data))
+      .then((result) => {
+        setUsers(result.data);
+        setIsLoading(false);
+      })
       .catch((err) => {
         if (err.code == "ERR_BAD_REQUEST") {
           navigate("/");
@@ -47,31 +43,11 @@ function Users() {
       });
   }, [navigate]);
 
-  const showDeleteConfirmation = (user) => {
-    setUserToDelete(user);
-    setShowDeleteModal(true);
-  };
-
-  const hideDeleteConfirmation = () => {
-    setUserToDelete(null);
-    setShowDeleteModal(false);
-  };
-
-  const handleDelete = (id) => {
-    const token = localStorage.getItem("token");
-    axios
-      .delete("http://localhost:5656/api/employees/" + id, {
-        headers: {
-          "x-auth-token": token,
-        },
-      })
-      .then((result) => {
-        console.log(result);
-        setUsers((prevUsers) => prevUsers.filter((user) => user._id !== id));
-        // users.filter((user) => user._id !== result._id);
-        // window.location.reload();
-      })
-      .catch((err) => console.log(err));
+  const handleUserDeletion = (deletedUserID) => {
+    setUsers((prevUsers) => {
+      // Use 'filter' to create a new array without the deleted user
+      return prevUsers.filter((user) => user._id !== deletedUserID);
+    });
   };
 
   const handleUserCreate = (user) => {
@@ -104,52 +80,54 @@ function Users() {
               <Card.Body>
                 <CreateUser onUserCreate={handleUserCreate} />
                 <div className="table-responsive">
-                  <Table striped>
-                    <thead>
-                      <tr>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Phone</th>
-                        <th>Age</th>
-                        <th>Action</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {users.map((user) => {
-                        return (
-                          <tr key={user._id}>
-                            <td>
-                              <Link
-                                to="#"
-                                onClick={() => setSelectedUser(user)}
-                              >
-                                {user.name}
-                              </Link>
-                            </td>
-                            <td>{user.email}</td>
-                            <td>{user.phone}</td>
-                            <td>{user.age}</td>
-                            <td>
-                              <div className="btn-group">
-                                <UpdateUser
-                                  user={user}
-                                  onUpdateUser={handleUpdateUser}
-                                />
-
-                                <Button
-                                  size="sm"
-                                  variant="outline-danger"
-                                  onClick={() => showDeleteConfirmation(user)}
+                  {isLoading ? (
+                    <p>Loading...</p>
+                  ) : (
+                    <Table striped>
+                      <thead>
+                        <tr>
+                          <th>Name</th>
+                          <th>Email</th>
+                          <th>Phone</th>
+                          <th>Age</th>
+                          <th>Action</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {users.map((user) => {
+                          return (
+                            <tr key={user._id}>
+                              <td>
+                                <Link
+                                  to="#"
+                                  onClick={() => setSelectedUser(user)}
                                 >
-                                  Delete
-                                </Button>
-                              </div>
-                            </td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </Table>
+                                  {user.name}
+                                </Link>
+                              </td>
+                              <td>{user.email}</td>
+                              <td>{user.phone}</td>
+                              <td>{user.age}</td>
+                              <td>
+                                <div className="btn-group">
+                                  <UpdateUser
+                                    user={user}
+                                    onUpdateUser={handleUpdateUser}
+                                  />
+
+                                  <Delete
+                                    user={user}
+                                    onDeleteUser={handleUserDeletion}
+                                    // onClick={() => showDeleteConfirmation(user)}
+                                  />
+                                </div>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </Table>
+                  )}
                 </div>
               </Card.Body>
             </Card>
@@ -159,35 +137,6 @@ function Users() {
       {selectedUser && (
         <UserModal onClose={() => setSelectedUser(null)} user={selectedUser} />
       )}
-      <Modal
-        show={showDeleteModal}
-        onHide={hideDeleteConfirmation}
-        backdrop="static"
-        keyboard={false}
-      >
-        <Modal.Header closeButton>
-          <Modal.Title>Confirm Delete</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          {userToDelete && (
-            <p>Are you sure you want to delete {userToDelete.name}?</p>
-          )}
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={hideDeleteConfirmation}>
-            Cancel
-          </Button>
-          <Button
-            variant="danger"
-            onClick={() => {
-              handleDelete(userToDelete._id);
-              hideDeleteConfirmation();
-            }}
-          >
-            Delete
-          </Button>
-        </Modal.Footer>
-      </Modal>
     </>
   );
 }

@@ -52,7 +52,7 @@ function UpdateUser({ user, onUpdateUser }) {
     if (token) {
       setIsLoading(true);
       axios
-        .put(`http://localhost:5656/api/employees/${user._id}`, values, {
+        .put(`${import.meta.env.VITE_ENDPOINT}/employees/${user._id}`, values, {
           headers: {
             "x-auth-token": token,
           },

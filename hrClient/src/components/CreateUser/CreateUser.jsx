@@ -2,7 +2,7 @@ import { useState } from "react";
 import axios from "axios";
 import * as Yup from "yup";
 import { Formik, Form, Field } from "formik";
-// import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Button, Modal, Spinner } from "react-bootstrap";
 import PropTypes from "prop-types";
 
@@ -40,6 +40,7 @@ function CreateUser({ onUserCreate }) {
   const [show, setShow] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
+  const navigate = useNavigate();
 
   const handleSubmit = (values, { setSubmitting }) => {
     const token = localStorage.getItem("token");
@@ -62,9 +63,10 @@ function CreateUser({ onUserCreate }) {
         .finally(() => {
           setSubmitting(false);
           setIsLoading(false);
+          setShowAlert(false);
         });
     } else {
-      // navigate("/login");
+      navigate("/login");
     }
   };
 
